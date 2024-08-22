@@ -38,4 +38,5 @@ td {
 .team-row.touch-dragging {
   background-color: #eee;
   border: 2px solid #333;
+  transition: background-color 0.3s;
 }
