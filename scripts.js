@@ -1,30 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
   const teamRows = document.querySelectorAll('.team-row');
   let draggedRow = null;
-  let initialY = 0;
   let touchStartY = 0;
   let touchCurrentY = 0;
   let touchTarget = null;
 
+  // Handle Drag Start
   const handleDragStart = function () {
     draggedRow = this;
     setTimeout(() => this.classList.add('dragging'), 0);
   };
 
+  // Handle Drag End
   const handleDragEnd = function () {
     setTimeout(() => this.classList.remove('dragging'), 0);
     draggedRow = null;
   };
 
+  // Handle Drag Over
   const handleDragOver = function (e) {
-    e.preventDefault();
+    e.preventDefault();  // Allow drop
     this.classList.add('over');
   };
 
+  // Handle Drag Leave
   const handleDragLeave = function () {
     this.classList.remove('over');
   };
 
+  // Handle Drop
   const handleDrop = function () {
     this.classList.remove('over');
     if (draggedRow && draggedRow !== this) {
@@ -32,10 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const rows = Array.from(tableBody.children);
       const dropIndex = rows.indexOf(this);
       tableBody.insertBefore(draggedRow, rows[dropIndex]);
-      updatePositions();
+      updatePositions();  // Update the positions after swap
     }
   };
 
+  // Handle Touch Start
   const handleTouchStart = function (e) {
     e.preventDefault();
     touchTarget = e.target.closest('.team-row');
@@ -46,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Handle Touch Move
   const handleTouchMove = function (e) {
     e.preventDefault();
     if (draggedRow) {
@@ -66,27 +72,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Move the row temporarily to its new position
+      // Insert placeholder row
       const placeholder = document.createElement('tr');
-      placeholder.style.height = `${draggedRow.offsetHeight}px`;
+      placeholder.classList.add('placeholder');
       draggedRow.parentNode.insertBefore(placeholder, rows[newDropIndex] || null);
-      draggedRow.style.transform = '';
     }
   };
 
+  // Handle Touch End
   const handleTouchEnd = function (e) {
     e.preventDefault();
     if (draggedRow) {
-      draggedRow.style.transform = ''; // Reset transformation
+      draggedRow.style.transform = '';  // Reset transformation
       const rows = Array.from(draggedRow.parentNode.children);
-      const placeholder = rows.find(row => row.style.height);
+      const placeholder = rows.find(row => row.classList.contains('placeholder'));
 
       if (placeholder) {
         placeholder.remove();
+        const newIndex = rows.indexOf(draggedRow);
+        const oldIndex = Array.from(draggedRow.parentNode.children).indexOf(draggedRow);
+        if (oldIndex !== newIndex) {
+          draggedRow.parentNode.insertBefore(draggedRow, rows[newIndex + (newIndex > oldIndex ? 1 : 0)]);
+        }
       }
 
-      // Update the positions
-      updatePositions();
+      updatePositions();  // Update positions after drop
       draggedRow.classList.remove('touch-dragging');
       draggedRow = null;
       touchTarget = null;
