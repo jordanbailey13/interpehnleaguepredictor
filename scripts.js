@@ -64,11 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
       let newDropIndex = rows.length - 1;
 
       rows.forEach((row, index) => {
-        if (row !== draggedRow) {
-          const rect = row.getBoundingClientRect();
-          if (touchCurrentY > rect.top + rect.height / 2) {
-            newDropIndex = index + 1;
-          }
+        const rect = row.getBoundingClientRect();
+        if (touchCurrentY > rect.top + rect.height / 2 && row !== draggedRow) {
+          newDropIndex = index + 1;
         }
       });
 
@@ -89,9 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const placeholder = rows.find(row => row.classList.contains('placeholder'));
 
       if (placeholder) {
-        placeholder.remove();
         const newIndex = rows.indexOf(draggedRow);
-        draggedRow.parentNode.insertBefore(draggedRow, rows[newIndex + (newIndex > rows.indexOf(draggedRow) ? 1 : 0)]);
+        if (newIndex !== -1) {
+          draggedRow.parentNode.insertBefore(draggedRow, rows[newIndex + (newIndex > rows.indexOf(draggedRow) ? 1 : 0)]);
+        }
+        placeholder.remove();
       }
 
       updatePositions();  // Update positions after drop
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     row.addEventListener('dragend', handleDragEnd);
     row.addEventListener('dragover', handleDragOver);
     row.addEventListener('dragleave', handleDragLeave);
-    row.addEventListener('drop', handleDrop);
+    row.addEventListener('drop', handleDrop');
 
     row.addEventListener('touchstart', handleTouchStart);
     row.addEventListener('touchmove', handleTouchMove);
@@ -114,4 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function updatePositions() {
-    document.querySelectorAll('.position').forEach((positionCell
+    document.querySelectorAll('.position').forEach((positionCell, index) => {
+      positionCell.textContent = index + 1;
+    });
+  }
+});
