@@ -1,45 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const teamRows = document.querySelectorAll('.team-row');
+  const rows = document.querySelectorAll('.team-row');
+
   let draggedRow = null;
 
-  teamRows.forEach(row => {
-    // Add dragstart and dragend events
-    row.addEventListener('dragstart', function () {
-      draggedRow = this;
-      setTimeout(() => this.classList.add('dragging'), 0);
-    });
+  const handleDragStart = (e) => {
+    draggedRow = e.target;
+    e.target.classList.add('dragging');
+  };
 
-    row.addEventListener('dragend', function () {
-      setTimeout(() => this.classList.remove('dragging'), 0);
-      draggedRow = null;
-    });
+  const handleDragEnd = (e) => {
+    e.target.classList.remove('dragging');
+    draggedRow = null;
+  };
 
-    // Add dragover and drop events to handle reordering
-    row.addEventListener('dragover', function (e) {
-      e.preventDefault();  // Prevent default to allow drop
-      this.classList.add('over');
-    });
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.target.classList.add('drag-over');
+  };
 
-    row.addEventListener('dragleave', function () {
-      this.classList.remove('over');
-    });
+  const handleDragLeave = (e) => {
+    e.target.classList.remove('drag-over');
+  };
 
-    row.addEventListener('drop', function () {
-      this.classList.remove('over');
-      if (draggedRow !== this) {
-        const tableBody = this.parentNode;
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.target.classList.remove('drag-over');
+    if (e.target.classList.contains('team-row') && draggedRow !== e.target) {
+      const tableBody = e.target.parentElement;
+      tableBody.insertBefore(draggedRow, e.target.nextSibling);
+    }
+  };
 
-        // Swap the rows
-        tableBody.insertBefore(draggedRow, this.nextSibling);
-        updatePositions();  // Update the positions after the swap
-      }
-    });
+  rows.forEach(row => {
+    row.addEventListener('dragstart', handleDragStart);
+    row.addEventListener('dragend', handleDragEnd);
+    row.addEventListener('dragover', handleDragOver);
+    row.addEventListener('dragleave', handleDragLeave);
+    row.addEventListener('drop', handleDrop);
   });
 
-  // Function to update the position numbers after sorting
-  function updatePositions() {
-    document.querySelectorAll('.position').forEach((positionCell, index) => {
-      positionCell.textContent = index + 1;
-    });
-  }
+  // Touch event handlers for mobile
+  const handleTouchStart = (e) => {
+    draggedRow = e.target;
+    e.target.classList.add('dragging');
+  };
+
+  const handleTouchEnd = (e) => {
+    e.target.classList.remove('dragging');
+    draggedRow = null;
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+    // You may need to adjust this to support dragging behavior
+    // for touch devices. For simplicity, this example does not
+    // include full touch handling logic for drag-and-drop.
+  };
+
+  rows.forEach(row => {
+    row.addEventListener('touchstart', handleTouchStart);
+    row.addEventListener('touchend', handleTouchEnd);
+    row.addEventListener('touchmove', handleTouchMove);
+  });
 });
