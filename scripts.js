@@ -1,90 +1,63 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const teamRows = document.querySelectorAll('.team-row');
-  let draggedRow = null;
-  let initialY = 0;
-  let draggedRowOriginalIndex = null;
+let selectedItem = null;
 
-  const handleDragStart = function (e) {
-    e.dataTransfer.setData('text/plain', null); // For Firefox compatibility
-    draggedRow = this;
-    draggedRowOriginalIndex = Array.from(draggedRow.parentNode.children).indexOf(draggedRow);
-    setTimeout(() => draggedRow.classList.add('dragging'), 0);
-  };
+function handleClick(event) {
+  if (window.innerWidth <= 768) { // Check if the device is mobile
+    const target = event.target.closest('.team-row'); // Ensure we're targeting the correct row
 
-  const handleDragEnd = function () {
-    setTimeout(() => draggedRow.classList.remove('dragging'), 0);
-    draggedRow = null;
-  };
+    if (!target || !target.classList.contains('team-row')) return;
 
-  const handleDragOver = function (e) {
-    e.preventDefault(); // Prevent default to allow drop
-    this.classList.add('over');
-  };
+    if (selectedItem) {
+      // Move the previously selected item to the new position
+      const selectedIndex = Array.from(target.parentNode.children).indexOf(selectedItem);
+      const targetIndex = Array.from(target.parentNode.children).indexOf(target);
 
-  const handleDragLeave = function () {
-    this.classList.remove('over');
-  };
-
-  const handleDrop = function () {
-    this.classList.remove('over');
-    if (draggedRow && draggedRow !== this) {
-      const tableBody = this.parentNode;
-      const dropIndex = Array.from(tableBody.children).indexOf(this);
-      const rows = Array.from(tableBody.children);
-      if (dropIndex !== draggedRowOriginalIndex) {
-        tableBody.insertBefore(draggedRow, tableBody.children[dropIndex]);
-        updatePositions(); // Update the positions after the swap
+      // Swap positions
+      if (selectedIndex !== targetIndex) {
+        target.parentNode.insertBefore(selectedItem, target);
+        target.parentNode.insertBefore(target, selectedItem.nextSibling);
       }
+
+      selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
+      selectedItem = null;
+    } else {
+      // Select the item
+      selectedItem = target;
+      selectedItem.classList.add('selected'); // Add a class to highlight the selected item
     }
-  };
-
-  const handleTouchStart = function (e) {
-    e.preventDefault();
-    touchTarget = e.target.closest('.team-row');
-    if (touchTarget) {
-      draggedRow = touchTarget;
-      initialY = e.touches[0].clientY;
-      setTimeout(() => touchTarget.classList.add('touch-dragging'), 0);
-    }
-  };
-
-  const handleTouchMove = function (e) {
-    e.preventDefault();
-    if (draggedRow) {
-      const currentY = e.touches[0].clientY;
-      const touchOffsetY = currentY - initialY;
-      draggedRow.style.transform = `translateY(${touchOffsetY}px)`;
-      // Potentially handle dropping position here
-    }
-  };
-
-  const handleTouchEnd = function (e) {
-    e.preventDefault();
-    if (draggedRow) {
-      draggedRow.style.transform = ''; // Reset transformation
-      touchTarget.classList.remove('touch-dragging');
-      // Add logic to finalize the drop position
-      draggedRow = null;
-      touchTarget = null;
-    }
-  };
-
-  teamRows.forEach(row => {
-    row.addEventListener('dragstart', handleDragStart);
-    row.addEventListener('dragend', handleDragEnd);
-    row.addEventListener('dragover', handleDragOver);
-    row.addEventListener('dragleave', handleDragLeave);
-    row.addEventListener('drop', handleDrop);
-
-    row.addEventListener('touchstart', handleTouchStart);
-    row.addEventListener('touchmove', handleTouchMove);
-    row.addEventListener('touchend', handleTouchEnd);
-  });
-
-  function updatePositions() {
-    document.querySelectorAll('.position').forEach((positionCell, index) => {
-      positionCell.textContent = index + 1;
-    });
   }
-});
+}
 
+function handleDragStart(event) {
+  if (window.innerWidth > 768) {
+    event.dataTransfer.setData('text/plain', event.target.id);
+  }
+}
+
+function handleDrop(event) {
+  event.preventDefault();
+  const draggedElementId = event.dataTransfer.getData('text/plain');
+  const draggedElement = document.getElementById(draggedElementId);
+  const target = event.target.closest('.team-row');
+
+  if (target && draggedElement && target !== draggedElement) {
+    // Move the dragged item to the new position
+    const draggedIndex = Array.from(target.parentNode.children).indexOf(draggedElement);
+    const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+
+    if (draggedIndex !== targetIndex) {
+      target.parentNode.insertBefore(draggedElement, target);
+      target.parentNode.insertBefore(target, draggedElement.nextSibling);
+    }
+  }
+}
+
+function handleDragOver(event) {
+  event.preventDefault();
+}
+
+document.querySelectorAll('.team-row').forEach(item => {
+  item.addEventListener('click', handleClick);
+  item.addEventListener('dragstart', handleDragStart);
+  item.addEventListener('dragover', handleDragOver);
+  item.addEventListener('drop', handleDrop);
+});
