@@ -21,6 +21,8 @@ td {
 
 .team-row {
   background-color: #f9f9f9;
+  cursor: move; /* Show a move cursor for desktop */
+  touch-action: none; /* Prevent default touch interactions to handle custom touch events */
 }
 
 .team-row.dragging {
@@ -30,4 +32,10 @@ td {
 
 .team-row.over {
   border: 2px dashed #000;
+}
+
+/* Optional: Add visual feedback for touch devices */
+.team-row.touch-dragging {
+  background-color: #eee;
+  border: 2px solid #333;
 }
