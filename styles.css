@@ -1,43 +1,27 @@
 body {
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .table-container {
-  margin: 20px auto;
-  width: 300px;
-  border-collapse: collapse;
+  margin: 20px;
 }
 
 table {
   width: 100%;
-  border: 1px solid #ccc;
+  border-collapse: collapse;
 }
 
-td {
-  padding: 10px;
-  border: 1px solid #ccc;
-  text-align: center;
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
-.team-row {
-  background-color: #f9f9f9;
-  cursor: move; /* Show a move cursor for desktop */
-  touch-action: none; /* Prevent default touch interactions to handle custom touch events */
+tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 
-.team-row.dragging {
-  opacity: 0.5;
-  background-color: #ddd;
+.selected {
+  background-color: #f0f0f0; /* Highlight color for selected item */
 }
-
-.team-row.over {
-  border: 2px dashed #000;
-}
-
-/* Optional: Add visual feedback for touch devices */
-.team-row.touch-dragging {
-  background-color: #eee;
-  border: 2px solid #333;
-  transition: background-color 0.3s;
-}
-
