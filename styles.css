@@ -36,5 +36,5 @@ td {
 .placeholder {
   background-color: #eee;
   border: 1px solid #ddd;
-  height: 0;  /* Initially invisible */
+  height: 0;  /* Ensure placeholder is initially invisible */
 }
