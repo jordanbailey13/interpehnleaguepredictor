@@ -6,22 +6,24 @@ function handleTouchStart(event) {
   if (window.innerWidth <= 768) { // Check if the device is mobile
     event.preventDefault(); // Prevent default touch action
 
-    const target = event.target.closest('.team-row'); // Ensure we're targeting the correct row
-    if (!target || !target.classList.contains('team-row')) return;
+    const target = event.target.closest('.team'); // Ensure we're targeting the correct team cell
+    if (!target || !target.classList.contains('team')) return;
+
+    const row = target.closest('.team-row'); // Get the whole row
 
     if (selectedItem) {
       // Move the previously selected item to the new position
       if (touchStart && (Date.now() - touchStart < touchDelay)) {
         // Handle double-tap (move item)
         const rows = Array.from(document.querySelectorAll('.team-row'));
-        const selectedIndex = rows.indexOf(selectedItem);
-        const targetIndex = rows.indexOf(target);
+        const selectedIndex = rows.indexOf(selectedItem.parentElement);
+        const targetIndex = rows.indexOf(row);
 
         // Swap team names but keep position numbers fixed
         if (selectedIndex !== targetIndex) {
-          const tableBody = target.parentNode;
-          tableBody.insertBefore(selectedItem, target);
-          tableBody.insertBefore(target, selectedItem.nextSibling);
+          const tableBody = row.parentNode;
+          tableBody.insertBefore(selectedItem.parentElement, row);
+          tableBody.insertBefore(row, selectedItem.parentElement.nextSibling);
         }
 
         selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
@@ -55,16 +57,16 @@ function handleDrop(event) {
   const draggedElement = document.getElementById(draggedElementId);
   const target = event.target.closest('.team-row');
 
-  if (target && draggedElement && target !== draggedElement) {
+  if (target && draggedElement && target !== draggedElement.parentElement) {
     // Move the dragged item to the new position
     const rows = Array.from(document.querySelectorAll('.team-row'));
-    const draggedIndex = rows.indexOf(draggedElement);
+    const draggedIndex = rows.indexOf(draggedElement.parentElement);
     const targetIndex = rows.indexOf(target);
 
     if (draggedIndex !== targetIndex) {
       const tableBody = target.parentNode;
-      tableBody.insertBefore(draggedElement, target);
-      tableBody.insertBefore(target, draggedElement.nextSibling);
+      tableBody.insertBefore(draggedElement.parentElement, target);
+      tableBody.insertBefore(target, draggedElement.parentElement.nextSibling);
     }
   }
 }
@@ -73,7 +75,7 @@ function handleDragOver(event) {
   event.preventDefault();
 }
 
-document.querySelectorAll('.team-row').forEach(item => {
+document.querySelectorAll('.team').forEach(item => {
   item.addEventListener('touchstart', handleTouchStart);
   item.addEventListener('dragstart', handleDragStart);
   item.addEventListener('dragover', handleDragOver);
