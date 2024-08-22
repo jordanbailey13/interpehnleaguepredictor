@@ -5,30 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
   let touchCurrentY = 0;
   let touchTarget = null;
 
-  // Handle Drag Start
   const handleDragStart = function () {
     draggedRow = this;
     setTimeout(() => this.classList.add('dragging'), 0);
   };
 
-  // Handle Drag End
   const handleDragEnd = function () {
     setTimeout(() => this.classList.remove('dragging'), 0);
     draggedRow = null;
   };
 
-  // Handle Drag Over
   const handleDragOver = function (e) {
     e.preventDefault();  // Allow drop
     this.classList.add('over');
   };
 
-  // Handle Drag Leave
   const handleDragLeave = function () {
     this.classList.remove('over');
   };
 
-  // Handle Drop
   const handleDrop = function () {
     this.classList.remove('over');
     if (draggedRow && draggedRow !== this) {
@@ -36,11 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const rows = Array.from(tableBody.children);
       const dropIndex = rows.indexOf(this);
       tableBody.insertBefore(draggedRow, rows[dropIndex]);
-      updatePositions();  // Update the positions after swap
+      updatePositions();  // Update positions after swap
     }
   };
 
-  // Handle Touch Start
   const handleTouchStart = function (e) {
     e.preventDefault();
     touchTarget = e.target.closest('.team-row');
@@ -51,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Handle Touch Move
   const handleTouchMove = function (e) {
     e.preventDefault();
     if (draggedRow) {
@@ -75,11 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Insert placeholder row
       const placeholder = document.createElement('tr');
       placeholder.classList.add('placeholder');
+      placeholder.style.height = `${draggedRow.offsetHeight}px`;
       draggedRow.parentNode.insertBefore(placeholder, rows[newDropIndex] || null);
     }
   };
 
-  // Handle Touch End
   const handleTouchEnd = function (e) {
     e.preventDefault();
     if (draggedRow) {
