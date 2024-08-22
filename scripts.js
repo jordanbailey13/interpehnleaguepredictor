@@ -1,86 +1,98 @@
-let selectedItem = null;
-let touchStart = null;
-const touchDelay = 300; // Time in milliseconds to distinguish between tap and double-tap
-
-function handleTouchStart(event) {
-  if (window.innerWidth <= 768) { // Check if the device is mobile
-    event.preventDefault(); // Prevent default touch action
-
-    const target = event.target.closest('.team'); // Ensure we're targeting the correct team cell
-    if (!target || !target.classList.contains('team')) return;
-
-    if (selectedItem) {
-      // Move the previously selected item to the new position
-      if (touchStart && (Date.now() - touchStart < touchDelay)) {
-        // Handle double-tap (move item)
-        const rows = Array.from(document.querySelectorAll('.team-row'));
-        const selectedIndex = rows.indexOf(selectedItem.parentElement);
-        const targetIndex = rows.indexOf(target.parentElement);
-
-        // Swap team names but keep position numbers fixed
-        if (selectedIndex !== targetIndex) {
-          const tableBody = target.parentElement.parentNode;
-          const selectedTeamCell = selectedItem.cloneNode(true);
-          const targetTeamCell = target.cloneNode(true);
-
-          // Swap the text content of team cells
-          target.textContent = selectedTeamCell.textContent;
-          selectedItem.textContent = targetTeamCell.textContent;
-
-          // Clear selected state
-          selectedItem.classList.remove('selected');
-          selectedItem = null;
-          touchStart = null; // Reset touchStart after moving
-        }
-      } else {
-        // Handle single-tap (select item)
-        selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
-        selectedItem = target;
-        selectedItem.classList.add('selected'); // Add a class to highlight the selected item
-        touchStart = Date.now(); // Record touch start time
-      }
-    } else {
-      // Handle single-tap (select item)
-      selectedItem = target;
-      selectedItem.classList.add('selected'); // Add a class to highlight the selected item
-      touchStart = Date.now(); // Record touch start time
-    }
-  }
-}
-
-function handleDragStart(event) {
-  if (window.innerWidth > 768) {
-    event.dataTransfer.setData('text/plain', event.target.id);
-  }
-}
-
-function handleDrop(event) {
-  event.preventDefault();
-  const draggedElementId = event.dataTransfer.getData('text/plain');
-  const draggedElement = document.getElementById(draggedElementId);
-  const target = event.target.closest('.team-row');
-
-  if (target && draggedElement && target !== draggedElement.parentElement) {
-    // Move the dragged item to the new position
-    const rows = Array.from(document.querySelectorAll('.team-row'));
-    const draggedIndex = rows.indexOf(draggedElement.parentElement);
-    const targetIndex = rows.indexOf(target);
-
-    if (draggedIndex !== targetIndex) {
-      const tableBody = target.parentNode;
-      tableBody.insertBefore(draggedElement.parentElement, target);
-      tableBody.insertBefore(target, draggedElement.parentElement.nextSibling);
-    }
-  }
-}
-
-function handleDragOver(event) {
-  event.preventDefault();
-}
-
-document.querySelectorAll('.team').forEach(item => {
-  item.addEventListener('touchstart', handleTouchStart);
-  item.addEventListener('dragstart', handleDragStart);
-  item.addEventListener('dragover', handleDragOver);
-  item.addEventListener('drop', handleDrop);
-});
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sortable Soccer Teams</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="table-container">
+    <table id="teamsTable">
+      <tbody>
+        <tr draggable="true" class="team-row">
+          <td class="position">1</td>
+          <td class="team">Manchester City</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">2</td>
+          <td class="team">Arsenal</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">3</td>
+          <td class="team">Liverpool</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">4</td>
+          <td class="team">Newcastle United</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">5</td>
+          <td class="team">Manchester United</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">6</td>
+          <td class="team">Chelsea</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">7</td>
+          <td class="team">Tottenham Hotspur</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">8</td>
+          <td class="team">Aston Villa</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">9</td>
+          <td class="team">West Ham United</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">10</td>
+          <td class="team">Brighton and Hove Albion</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">11</td>
+          <td class="team">Wolves</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">12</td>
+          <td class="team">Everton</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">13</td>
+          <td class="team">Crystal Palace</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">14</td>
+          <td class="team">Brentford</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">15</td>
+          <td class="team">Bournemouth</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">16</td>
+          <td class="team">Fulham</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">17</td>
+          <td class="team">Southampton</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">18</td>
+          <td class="team">Leicester City</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">19</td>
+          <td class="team">Nottingham Forest</td>
+        </tr>
+        <tr draggable="true" class="team-row">
+          <td class="position">20</td>
+          <td class="team">Ipswich Town</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script src="scripts.js"></script>
+</body>
+</html>
