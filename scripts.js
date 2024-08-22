@@ -5,25 +5,30 @@ document.addEventListener('DOMContentLoaded', () => {
   let touchCurrentY = 0;
   let touchTarget = null;
 
+  // Handle Drag Start
   const handleDragStart = function () {
     draggedRow = this;
     setTimeout(() => this.classList.add('dragging'), 0);
   };
 
+  // Handle Drag End
   const handleDragEnd = function () {
     setTimeout(() => this.classList.remove('dragging'), 0);
     draggedRow = null;
   };
 
+  // Handle Drag Over
   const handleDragOver = function (e) {
     e.preventDefault();  // Allow drop
     this.classList.add('over');
   };
 
+  // Handle Drag Leave
   const handleDragLeave = function () {
     this.classList.remove('over');
   };
 
+  // Handle Drop
   const handleDrop = function () {
     this.classList.remove('over');
     if (draggedRow && draggedRow !== this) {
@@ -35,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Handle Touch Start
   const handleTouchStart = function (e) {
     e.preventDefault();
     touchTarget = e.target.closest('.team-row');
@@ -45,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Handle Touch Move
   const handleTouchMove = function (e) {
     e.preventDefault();
     if (draggedRow) {
@@ -73,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Handle Touch End
   const handleTouchEnd = function (e) {
     e.preventDefault();
     if (draggedRow) {
@@ -83,10 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (placeholder) {
         placeholder.remove();
         const newIndex = rows.indexOf(draggedRow);
-        const oldIndex = Array.from(draggedRow.parentNode.children).indexOf(draggedRow);
-        if (oldIndex !== newIndex) {
-          draggedRow.parentNode.insertBefore(draggedRow, rows[newIndex + (newIndex > oldIndex ? 1 : 0)]);
-        }
+        draggedRow.parentNode.insertBefore(draggedRow, rows[newIndex + (newIndex > rows.indexOf(draggedRow) ? 1 : 0)]);
       }
 
       updatePositions();  // Update positions after drop
@@ -109,8 +114,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function updatePositions() {
-    document.querySelectorAll('.position').forEach((positionCell, index) => {
-      positionCell.textContent = index + 1;
-    });
-  }
-});
+    document.querySelectorAll('.position').forEach((positionCell
