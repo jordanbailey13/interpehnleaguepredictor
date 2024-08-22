@@ -34,23 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const handleTouchStart = function (e) {
-    touchTarget = e.target;
-    draggedRow = touchTarget;
-    setTimeout(() => touchTarget.classList.add('dragging'), 0);
+    e.preventDefault();  // Prevent default to avoid unwanted scrolling
+    touchTarget = e.target.closest('.team-row');
+    if (touchTarget) {
+      draggedRow = touchTarget;
+      setTimeout(() => touchTarget.classList.add('touch-dragging'), 0);
+    }
   };
 
   const handleTouchEnd = function (e) {
     e.preventDefault();
     if (touchTarget) {
-      touchTarget.classList.remove('dragging');
+      touchTarget.classList.remove('touch-dragging');
+      // Add logic to determine drop position if needed
       touchTarget = null;
     }
   };
 
   const handleTouchMove = function (e) {
     e.preventDefault();
-    // Here you can implement logic to simulate dragging if needed
-    // For simplicity, this example does not include full touch handling
+    // Add logic to visually update position if needed
   };
 
   teamRows.forEach(row => {
