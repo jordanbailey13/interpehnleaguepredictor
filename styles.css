@@ -41,3 +41,9 @@ td {
   transition: background-color 0.3s;
 }
 
+/* Ensures correct spacing when dragging */
+.team-row.placeholder {
+  background-color: transparent;
+  border: none;
+  height: 1px; /* Adjust if needed to prevent layout shift */
+}
