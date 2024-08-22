@@ -1,6 +1,5 @@
 let selectedItem = null;
 let touchStart = null;
-let touchTimeout = null;
 const touchDelay = 300; // Time in milliseconds to distinguish between tap and double-tap
 
 function handleTouchStart(event) {
@@ -17,7 +16,7 @@ function handleTouchStart(event) {
         const selectedIndex = Array.from(target.parentNode.children).indexOf(selectedItem);
         const targetIndex = Array.from(target.parentNode.children).indexOf(target);
 
-        // Swap positions
+        // Swap team names but keep position numbers fixed
         if (selectedIndex !== targetIndex) {
           target.parentNode.insertBefore(selectedItem, target);
           target.parentNode.insertBefore(target, selectedItem.nextSibling);
