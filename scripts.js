@@ -1,65 +1,78 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const rows = document.querySelectorAll('.team-row');
-
+  const teamRows = document.querySelectorAll('.team-row');
   let draggedRow = null;
+  let touchTarget = null;
 
-  const handleDragStart = (e) => {
-    draggedRow = e.target;
-    e.target.classList.add('dragging');
+  const handleDragStart = function () {
+    draggedRow = this;
+    setTimeout(() => this.classList.add('dragging'), 0);
   };
 
-  const handleDragEnd = (e) => {
-    e.target.classList.remove('dragging');
+  const handleDragEnd = function () {
+    setTimeout(() => this.classList.remove('dragging'), 0);
     draggedRow = null;
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
+  const handleDragOver = function (e) {
+    e.preventDefault();  // Prevent default to allow drop
+    this.classList.add('over');
   };
 
-  const handleDragLeave = (e) => {
-    e.target.classList.remove('drag-over');
+  const handleDragLeave = function () {
+    this.classList.remove('over');
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.target.classList.remove('drag-over');
-    if (e.target.classList.contains('team-row') && draggedRow !== e.target) {
-      const tableBody = e.target.parentElement;
-      tableBody.insertBefore(draggedRow, e.target.nextSibling);
+  const handleDrop = function () {
+    this.classList.remove('over');
+    if (draggedRow !== this) {
+      const tableBody = this.parentNode;
+
+      // Swap the rows
+      tableBody.insertBefore(draggedRow, this.nextSibling);
+      updatePositions();  // Update the positions after the swap
     }
   };
 
-  rows.forEach(row => {
+  const handleTouchStart = function (e) {
+    touchTarget = e.target;
+    draggedRow = touchTarget;
+    setTimeout(() => touchTarget.classList.add('dragging'), 0);
+  };
+
+  const handleTouchEnd = function (e) {
+    e.preventDefault();
+    if (touchTarget) {
+      touchTarget.classList.remove('dragging');
+      touchTarget = null;
+    }
+  };
+
+  const handleTouchMove = function (e) {
+    e.preventDefault();
+    // Here you can implement logic to simulate dragging if needed
+    // For simplicity, this example does not include full touch handling
+  };
+
+  teamRows.forEach(row => {
+    // Add dragstart and dragend events for mouse
     row.addEventListener('dragstart', handleDragStart);
     row.addEventListener('dragend', handleDragEnd);
+
+    // Add dragover, dragleave, and drop events for mouse
     row.addEventListener('dragover', handleDragOver);
     row.addEventListener('dragleave', handleDragLeave);
     row.addEventListener('drop', handleDrop);
-  });
 
-  // Touch event handlers for mobile
-  const handleTouchStart = (e) => {
-    draggedRow = e.target;
-    e.target.classList.add('dragging');
-  };
-
-  const handleTouchEnd = (e) => {
-    e.target.classList.remove('dragging');
-    draggedRow = null;
-  };
-
-  const handleTouchMove = (e) => {
-    e.preventDefault();
-    // You may need to adjust this to support dragging behavior
-    // for touch devices. For simplicity, this example does not
-    // include full touch handling logic for drag-and-drop.
-  };
-
-  rows.forEach(row => {
+    // Add touchstart, touchend, and touchmove events for touch devices
     row.addEventListener('touchstart', handleTouchStart);
     row.addEventListener('touchend', handleTouchEnd);
     row.addEventListener('touchmove', handleTouchMove);
   });
+
+  // Function to update the position numbers after sorting
+  function updatePositions() {
+    document.querySelectorAll('.position').forEach((positionCell, index) => {
+      positionCell.textContent = index + 1;
+    });
+  }
 });
