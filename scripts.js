@@ -13,13 +13,15 @@ function handleTouchStart(event) {
       // Move the previously selected item to the new position
       if (touchStart && (Date.now() - touchStart < touchDelay)) {
         // Handle double-tap (move item)
-        const selectedIndex = Array.from(target.parentNode.children).indexOf(selectedItem);
-        const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+        const rows = Array.from(document.querySelectorAll('.team-row'));
+        const selectedIndex = rows.indexOf(selectedItem);
+        const targetIndex = rows.indexOf(target);
 
         // Swap team names but keep position numbers fixed
         if (selectedIndex !== targetIndex) {
-          target.parentNode.insertBefore(selectedItem, target);
-          target.parentNode.insertBefore(target, selectedItem.nextSibling);
+          const tableBody = target.parentNode;
+          tableBody.insertBefore(selectedItem, target);
+          tableBody.insertBefore(target, selectedItem.nextSibling);
         }
 
         selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
@@ -55,12 +57,14 @@ function handleDrop(event) {
 
   if (target && draggedElement && target !== draggedElement) {
     // Move the dragged item to the new position
-    const draggedIndex = Array.from(target.parentNode.children).indexOf(draggedElement);
-    const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+    const rows = Array.from(document.querySelectorAll('.team-row'));
+    const draggedIndex = rows.indexOf(draggedElement);
+    const targetIndex = rows.indexOf(target);
 
     if (draggedIndex !== targetIndex) {
-      target.parentNode.insertBefore(draggedElement, target);
-      target.parentNode.insertBefore(target, draggedElement.nextSibling);
+      const tableBody = target.parentNode;
+      tableBody.insertBefore(draggedElement, target);
+      tableBody.insertBefore(target, draggedElement.nextSibling);
     }
   }
 }
