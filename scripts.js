@@ -1,28 +1,43 @@
 let selectedItem = null;
+let touchStart = null;
+let touchTimeout = null;
+const touchDelay = 300; // Time in milliseconds to distinguish between tap and double-tap
 
-function handleClick(event) {
+function handleTouchStart(event) {
   if (window.innerWidth <= 768) { // Check if the device is mobile
-    const target = event.target.closest('.team-row'); // Ensure we're targeting the correct row
+    event.preventDefault(); // Prevent default touch action
 
+    const target = event.target.closest('.team-row'); // Ensure we're targeting the correct row
     if (!target || !target.classList.contains('team-row')) return;
 
     if (selectedItem) {
       // Move the previously selected item to the new position
-      const selectedIndex = Array.from(target.parentNode.children).indexOf(selectedItem);
-      const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+      if (touchStart && (Date.now() - touchStart < touchDelay)) {
+        // Handle double-tap (move item)
+        const selectedIndex = Array.from(target.parentNode.children).indexOf(selectedItem);
+        const targetIndex = Array.from(target.parentNode.children).indexOf(target);
 
-      // Swap positions
-      if (selectedIndex !== targetIndex) {
-        target.parentNode.insertBefore(selectedItem, target);
-        target.parentNode.insertBefore(target, selectedItem.nextSibling);
+        // Swap positions
+        if (selectedIndex !== targetIndex) {
+          target.parentNode.insertBefore(selectedItem, target);
+          target.parentNode.insertBefore(target, selectedItem.nextSibling);
+        }
+
+        selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
+        selectedItem = null;
+        touchStart = null; // Reset touchStart after moving
+      } else {
+        // Handle single-tap (select item)
+        selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
+        selectedItem = target;
+        selectedItem.classList.add('selected'); // Add a class to highlight the selected item
+        touchStart = Date.now(); // Record touch start time
       }
-
-      selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
-      selectedItem = null;
     } else {
-      // Select the item
+      // Handle single-tap (select item)
       selectedItem = target;
       selectedItem.classList.add('selected'); // Add a class to highlight the selected item
+      touchStart = Date.now(); // Record touch start time
     }
   }
 }
@@ -56,7 +71,7 @@ function handleDragOver(event) {
 }
 
 document.querySelectorAll('.team-row').forEach(item => {
-  item.addEventListener('click', handleClick);
+  item.addEventListener('touchstart', handleTouchStart);
   item.addEventListener('dragstart', handleDragStart);
   item.addEventListener('dragover', handleDragOver);
   item.addEventListener('drop', handleDrop);
