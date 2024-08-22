@@ -9,26 +9,29 @@ function handleTouchStart(event) {
     const target = event.target.closest('.team'); // Ensure we're targeting the correct team cell
     if (!target || !target.classList.contains('team')) return;
 
-    const row = target.closest('.team-row'); // Get the whole row
-
     if (selectedItem) {
       // Move the previously selected item to the new position
       if (touchStart && (Date.now() - touchStart < touchDelay)) {
         // Handle double-tap (move item)
         const rows = Array.from(document.querySelectorAll('.team-row'));
         const selectedIndex = rows.indexOf(selectedItem.parentElement);
-        const targetIndex = rows.indexOf(row);
+        const targetIndex = rows.indexOf(target.parentElement);
 
         // Swap team names but keep position numbers fixed
         if (selectedIndex !== targetIndex) {
-          const tableBody = row.parentNode;
-          tableBody.insertBefore(selectedItem.parentElement, row);
-          tableBody.insertBefore(row, selectedItem.parentElement.nextSibling);
-        }
+          const tableBody = target.parentElement.parentNode;
+          const selectedTeamCell = selectedItem.cloneNode(true);
+          const targetTeamCell = target.cloneNode(true);
 
-        selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
-        selectedItem = null;
-        touchStart = null; // Reset touchStart after moving
+          // Swap the text content of team cells
+          target.textContent = selectedTeamCell.textContent;
+          selectedItem.textContent = targetTeamCell.textContent;
+
+          // Clear selected state
+          selectedItem.classList.remove('selected');
+          selectedItem = null;
+          touchStart = null; // Reset touchStart after moving
+        }
       } else {
         // Handle single-tap (select item)
         selectedItem.classList.remove('selected'); // Remove highlight from the previously selected item
