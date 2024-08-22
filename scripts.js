@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const teamRows = document.querySelectorAll('.team-row');
   let draggedRow = null;
   let touchTarget = null;
+  let startTouchY = 0;
+  let currentTouchY = 0;
 
   const handleDragStart = function () {
     draggedRow = this;
@@ -38,22 +40,30 @@ document.addEventListener('DOMContentLoaded', () => {
     touchTarget = e.target.closest('.team-row');
     if (touchTarget) {
       draggedRow = touchTarget;
+      startTouchY = e.touches[0].clientY;
       setTimeout(() => touchTarget.classList.add('touch-dragging'), 0);
-    }
-  };
-
-  const handleTouchEnd = function (e) {
-    e.preventDefault();
-    if (touchTarget) {
-      touchTarget.classList.remove('touch-dragging');
-      // Add logic to determine drop position if needed
-      touchTarget = null;
     }
   };
 
   const handleTouchMove = function (e) {
     e.preventDefault();
-    // Add logic to visually update position if needed
+    if (draggedRow) {
+      currentTouchY = e.touches[0].clientY;
+      const touchOffsetY = currentTouchY - startTouchY;
+      draggedRow.style.transform = `translateY(${touchOffsetY}px)`;
+      // You may need additional logic to handle dropping position based on touch movement
+    }
+  };
+
+  const handleTouchEnd = function (e) {
+    e.preventDefault();
+    if (draggedRow) {
+      draggedRow.style.transform = '';  // Reset transformation
+      touchTarget.classList.remove('touch-dragging');
+      // You may need logic to determine the final drop position
+      draggedRow = null;
+      touchTarget = null;
+    }
   };
 
   teamRows.forEach(row => {
