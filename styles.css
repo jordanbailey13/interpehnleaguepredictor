@@ -1,11 +1,7 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
+/* Basic table styling */
 .table-container {
-  margin: 20px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 table {
@@ -13,15 +9,20 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
-  border: 1px solid #ddd;
+td {
   padding: 8px;
+  border: 1px solid #ddd;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
+/* Highlight the selected item */
+.team-row.selected {
+  background-color: #e0e0e0; /* Highlight color for selected item */
+  cursor: pointer; /* Change cursor to pointer for better UX */
 }
 
-.selected {
-  background-color: #f0f0f0; /* Highlight color for selected item */
+/* Ensure mobile-friendly touch area */
+@media (max-width: 768px) {
+  .team-row {
+    touch-action: manipulation; /* Improve touch responsiveness */
+  }
 }
